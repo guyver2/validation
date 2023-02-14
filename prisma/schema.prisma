@@ -1,0 +1,218 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id             String          @id @default(cuid())
+  name           String?
+  email          String?         @unique
+  password       String?
+  image          String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  software       Software[]
+  releases       Release[]
+  builds         Build[]
+  tests          Test[]
+  steps          Step[]
+  protocols      Protocol[]
+  reports        Report[]
+  stepExecutions StepExecution[]
+  evidences      Evidence[]
+}
+
+enum SoftwareStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Software {
+  id          String         @id @default(cuid())
+  name        String         @unique
+  description String?
+  status      SoftwareStatus @default(ACTIVE)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  owner       User           @relation(fields: [ownerId], references: [id])
+  ownerId     String
+  releases    Release[]
+  tests       Test[]
+}
+
+enum ReleaseStatus {
+  PENDING
+  TESTING
+  VALIDATED
+  FAILING
+  CANCELED
+}
+
+model Release {
+  id          String        @id @default(cuid())
+  software    Software      @relation(fields: [softwareId], references: [id])
+  softwareId  String
+  version     String
+  status      ReleaseStatus @default(PENDING)
+  releaseDate DateTime?
+  createdBy   User          @relation(fields: [createdById], references: [id])
+  createdById String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  builds      Build[]
+  protocols   Protocol[]
+}
+
+enum BuildStatus {
+  PENDING
+  BUILT
+  TESTING
+  VALIDATED
+  FAILED
+  CANCELED
+}
+
+model Build {
+  id          String      @id @default(cuid())
+  release     Release     @relation(fields: [releaseId], references: [id])
+  releaseId   String
+  version     String
+  status      BuildStatus @default(PENDING)
+  createdBy   User        @relation(fields: [createdById], references: [id])
+  createdById String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+enum TestStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Test {
+  id             String          @id @default(cuid())
+  software       Software        @relation(fields: [softwareId], references: [id])
+  softwareId     String
+  name           String
+  description    String?
+  status         TestStatus      @default(ACTIVE)
+  createdBy      User            @relation(fields: [createdById], references: [id])
+  createdById    String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  parentId       String?
+  parent         Test?           @relation("TestHistory", fields: [parentId], references: [id])
+  children       Test[]          @relation("TestHistory")
+  steps          Step[]
+  protocols      Protocol[]
+  testExecutions TestExecution[]
+}
+
+enum StepStatus {
+  EDITING
+  LOCKED
+}
+
+model Step {
+  id              String          @id @default(cuid())
+  test            Test            @relation(fields: [testId], references: [id])
+  testId          String
+  instruction     String
+  expectedOutcome String?
+  status          StepStatus      @default(EDITING)
+  createdBy       User            @relation(fields: [createdById], references: [id])
+  createdById     String
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  StepExecution   StepExecution[]
+}
+
+enum ProtocolStatus {
+  PENDING
+  COMPLETED
+  SIGNED
+}
+
+model Protocol {
+  id          String         @id @default(cuid())
+  name        String
+  description String?
+  status      ProtocolStatus @default(PENDING)
+  release     Release        @relation(fields: [releaseId], references: [id])
+  releaseId   String
+  createdBy   User           @relation(fields: [createdById], references: [id])
+  createdById String
+  tests       Test[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  reports     Report[]
+}
+
+enum ReportStatus {
+  PENDING
+  COMPLETED
+  SIGNED
+}
+
+model Report {
+  id          String       @id @default(cuid())
+  protocol    Protocol     @relation(fields: [protocolId], references: [id])
+  protocolId  String
+  status      ReportStatus @default(PENDING)
+  createdBy   User         @relation(fields: [createdById], references: [id])
+  createdById String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+enum TestExecutionStatus {
+  PENDING
+  PASS
+  FAIL
+  OTHER
+}
+
+model TestExecution {
+  id        String              @id @default(cuid())
+  test      Test                @relation(fields: [testId], references: [id])
+  testId    String
+  status    TestExecutionStatus @default(PENDING)
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+}
+
+enum StepExecutionStatus {
+  PENDING
+  PASS
+  FAIL
+  NA
+  OTHER
+}
+
+model StepExecution {
+  id        String              @id @default(cuid())
+  step      Step                @relation(fields: [stepId], references: [id])
+  stepId    String
+  user      User?               @relation(fields: [userId], references: [id])
+  userId    String?
+  comment   String?
+  status    StepExecutionStatus @default(PENDING)
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+  Evidence  Evidence[]
+}
+
+model Evidence {
+  id              String        @id @default(cuid())
+  stepExecution   StepExecution @relation(fields: [stepExecutionId], references: [id])
+  stepExecutionId String
+  path            String?
+  createdBy       User          @relation(fields: [createdById], references: [id])
+  createdById     String
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}

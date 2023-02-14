@@ -1,0 +1,36 @@
+version: '2'
+
+services:
+  postgres:
+    image: postgres:14.4-alpine
+    container_name: validation_db
+    restart: unless-stopped
+    ports:
+      - "${POSTGRES_PORT_EXT}:${POSTGRES_PORT_INT}"
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+      - POSTGRES_INITDB_ARGS=--auth=md5
+    shm_size: '1gb'
+    volumes:
+      - ${DATA_PATH}/db/postgres/data:/var/lib/postgresql/data
+    command:
+      [
+        'postgres',
+        '-N',
+        '150',
+        '-c',
+        'work_mem=64MB',
+        '-c',
+        'shared_buffers=1GB'
+      ]
+    networks:
+      - validation
+
+
+
+networks:
+  validation:
+    driver: bridge
+    name: validation
