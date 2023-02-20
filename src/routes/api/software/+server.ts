@@ -3,18 +3,18 @@ import { db } from '$lib/server/db/client'
 
 export const GET = async ({ url }) => {
 
-  const name = url.searchParams.get('name');
-  const id = url.searchParams.get('id');
-  const status = url.searchParams.get('status');
+  const name = url.searchParams.get('name') ?? undefined;
+  const id = url.searchParams.get('id') ?? undefined;
+  const status = url.searchParams.get('status') ?? undefined;
 
-  const data = await db.Software.findMany({
+  const data = await db.software.findMany({
                 where: {
                   name: {
-                    contains: name == null ? undefined : name,
+                    contains: name,
                     mode: 'insensitive',
                   },
-                  status: status == null ? undefined : status,
-                  id: id == null ? undefined : id
+                  status: status,
+                  id: id,
                 },
                 orderBy: [
                   {
@@ -33,10 +33,10 @@ export async function POST({ request }) {
   try {
     input = await request.json();
     const { name, description, ownerId } = input;
-    const data = await db.Software.create({
+    const data = await db.software.create({
                   data: {
                     name: name,
-                    description: description,
+                    description: description ?? undefined,
                     owner :  { connect: { id: ownerId } }
                   }
                 });

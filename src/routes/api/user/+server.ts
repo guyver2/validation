@@ -4,21 +4,21 @@ import { hashPassword } from '$lib/server/db/password';
 
 export const GET = async ({ url }) => {
 
-  const name = url.searchParams.get('name');
-  const email = url.searchParams.get('email');
-  const id = url.searchParams.get('id');
+  const name = url.searchParams.get('name') ?? undefined;
+  const email = url.searchParams.get('email') ?? undefined;
+  const id = url.searchParams.get('id') ?? undefined;
   
-  const data = await db.User.findMany({
+  const data = await db.user.findMany({
                 where: {
                   name: {
-                    contains: name == null ? undefined : name,
+                    contains: name,
                     mode: 'insensitive',
                   },
                   email: {
-                    contains: email == null?undefined : email,
+                    contains: email,
                     mode: 'insensitive',
                   },
-                  id: id == null ? undefined : id
+                  id: id,
                 },
                 orderBy: [
                   {
@@ -37,7 +37,7 @@ export async function POST({ request }) {
   try {
     input = await request.json();
     const { name, email, password } = input;
-    const data = await db.User.create({
+    const data = await db.user.create({
                   data: {
                     name: name,
                     email: email,
