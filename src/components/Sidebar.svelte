@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { writable, type Writable } from 'svelte/store';
 	import { AppRail } from '@skeletonlabs/skeleton';
-	import 'iconify-icon';
+	import { IconHome } from '@tabler/icons-svelte';
 	const storeValue: Writable<number> = writable(1);
 </script>
 
 <AppRail selected={storeValue}>
 	<svelte:fragment slot="lead">
-		<a href="/"><iconify-icon icon="mingcute:home-3-fill" class="text-[60px]" /></a>
+		<a href="/"><IconHome /></a>
 	</svelte:fragment>
 	<!-- AppRailTiles -->
 	<svelte:fragment slot="trail">

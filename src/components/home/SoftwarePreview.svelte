@@ -4,17 +4,11 @@
 </script>
 
 {#if sw}
-	<section class="card p-4">
+	<section class="card p-4 hover:bg-surface-200-700-token">
 		<div class="flex flex-row gap-4">
 			<h3>{sw.name}</h3>
 			<span class="badge variant-ghost-{sw.status == 'ACTIVE' ? 'success' : 'warning'}">
-				<span>{sw.status.toLowerCase()}</span>
-				<iconify-icon
-					icon={sw.status == 'ACTIVE'
-						? 'ic:baseline-check-circle-outline'
-						: 'ic:sharp-do-not-disturb'}
-					class="text-sm"
-				/>
+				{sw.status.toLowerCase()}
 			</span>
 		</div>
 		<p>{sw.description}</p>

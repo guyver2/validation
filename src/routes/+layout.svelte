@@ -5,12 +5,14 @@
 	import '../app.postcss';
 
 	import { AppShell } from '@skeletonlabs/skeleton';
-	import Sidebar from '../components/Sidebar.svelte';
+	import TopBar from '../components/TopBar.svelte';
+	import { Toast } from '@skeletonlabs/skeleton';
 </script>
 
 <AppShell>
-	<!-- <svelte:fragment slot="header">Header</svelte:fragment> -->
-	<svelte:fragment slot="sidebarLeft"><Sidebar /></svelte:fragment>
+	<svelte:fragment slot="header"><TopBar /></svelte:fragment>
+	<!-- <svelte:fragment slot="sidebarLeft"><Sidebar /></svelte:fragment> -->
 	<!-- Router Slot -->
 	<slot />
 </AppShell>
+<Toast />
