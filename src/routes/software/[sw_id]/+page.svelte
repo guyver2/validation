@@ -108,8 +108,8 @@
 			</svelte:fragment>
 		</TabGroup>
 	{:else if mode == ModeSW.NewRelease}
-		<NewReleaseForm sw={data.software} ownerId={'cle4p50ek0000fleco8bdnm3v'} {mode} />
+		<NewReleaseForm sw={data.software} ownerId={'cle4p50ek0000fleco8bdnm3v'} bind:mode />
 	{:else}
-		<NewTestForm sw={data.software} ownerId={'cle4p50ek0000fleco8bdnm3v'} {mode} />
+		<NewTestForm sw={data.software} ownerId={'cle4p50ek0000fleco8bdnm3v'} bind:mode />
 	{/if}
 </div>

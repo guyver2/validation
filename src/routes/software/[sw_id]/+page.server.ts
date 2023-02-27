@@ -1,4 +1,5 @@
 import type { PageServerLoad } from './$types';
+import { fail } from '@sveltejs/kit';
 import { db } from '$lib/server/db/client'
 
 
@@ -51,28 +52,61 @@ export const load = (async ({params}) => {
 
 /** @type {import('./$types').Actions} */
 export const actions = {
-  default: async ({ request }) => {
+  newRelease: async ({ request }) => {
     const data = await request.formData();
-    console.log("form data: ", data);
+    console.log(data);
+    const version = data.get('version');
+    const ownerId = data.get('ownerId');
+    const status = data.get('status');
+    const swId = data.get('swId');
+    const date = data.get('date');
+
+    if(!version || !date){
+      return fail(400, { invalid_input: true });
+    }
+
+    try {
+      await db.release.create({
+                  data: {
+                    version: version,
+                    releaseDate: new Date(date),
+                    status: status,
+                    createdBy :  { connect: { id: ownerId } },
+                    software : { connect: {id: swId }}
+                  }
+                });
+    } catch(err) {
+      return fail(400, { invalid_input: true });
+    } 
+    return {success: true};
+  },
+
+  newTest: async ({ request }) => {
+    const data = await request.formData();
     const name = data.get('name');
     const description = data.get('description');
     const status = data.get('status');
     const ownerId = data.get('ownerId');
+    const swId = data.get('swId');
 
-    // if(name && ['ACTIVE', 'INACTIVE'].includes(status) ) {
-    //   await db.software.create({
-    //               data: {
-    //                 name: name,
-    //                 description: description ?? undefined,
-    //                 status: status??undefined,
-    //                 owner :  { connect: { id: ownerId } }
-    //               }
-    //             });
+    if(!name){
+      return fail(400, { invalid_input: true });
+    }
 
+    try {
+      await db.test.create({
+                  data: {
+                    name: name,
+                    description: description,
+                    status: status,
+                    createdBy :  { connect: { id: ownerId } },
+                    software : { connect: {id: swId }}
+                  }
+                });
+    } catch(err) {
+      return fail(400, { invalid_input: true });
+    } 
     return {success: true};
-    // } else {
-    //   return fail(400, { invalid_input: true });
-    // }
   },
 
 };

@@ -16,7 +16,7 @@
 </div>
 <hr />
 <div class="card">
-	<form method="POST" use:enhance>
+	<form method="POST" use:enhance action="?/newRelease">
 		<input class="input" type="hidden" id="ownerId" name="ownerId" value={ownerId} />
 		<input class="input" type="hidden" id="swId" name="swId" value={sw.id} />
 		<input class="input" type="hidden" id="type" name="type" value="release" />
@@ -26,7 +26,7 @@
 			<div class="space-y-4">
 				<label class="label">
 					<span>Release version number</span>
-					<input class="input" type="text" placeholder="name" id="name" name="name" />
+					<input class="input" type="text" placeholder="X.Y.Z" id="version" name="version" />
 				</label>
 				<label class="label">
 					<span>Planned release date</span>
@@ -38,6 +38,7 @@
 						<span>Save</span>
 					</button>
 					<button
+						type="button"
 						class="btn bg-error-500"
 						on:click={() => {
 							mode = ModeSW.List;

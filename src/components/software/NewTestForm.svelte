@@ -16,7 +16,7 @@
 </div>
 <hr />
 <div class="card">
-	<form method="POST" use:enhance>
+	<form method="POST" use:enhance action="?/newTest">
 		<input class="input" type="hidden" id="ownerId" name="ownerId" value={ownerId} />
 		<input class="input" type="hidden" id="swId" name="swId" value={sw.id} />
 		<input class="input" type="hidden" id="type" name="type" value="test" />
@@ -33,7 +33,7 @@
 					<textarea
 						class="textarea"
 						rows="4"
-						placeholder="Test description."
+						placeholder="Description."
 						id="description"
 						name="description"
 					/>
@@ -44,6 +44,7 @@
 						<span>Save</span>
 					</button>
 					<button
+						type="button"
 						class="btn bg-error-500"
 						on:click={() => {
 							mode = ModeSW.List;

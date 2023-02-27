@@ -119,6 +119,7 @@
 								<span>Save</span>
 							</button>
 							<button
+								type="button"
 								class="btn bg-error-500"
 								on:click={() => {
 									creation = false;
